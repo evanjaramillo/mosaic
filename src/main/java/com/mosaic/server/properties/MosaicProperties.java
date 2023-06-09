@@ -1,5 +1,6 @@
 package com.mosaic.server.properties;
 
+import java.util.LinkedList;
 import java.util.List;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +10,9 @@ import org.springframework.context.annotation.Configuration;
 public class MosaicProperties {
     private List<TilesetProperties> tilesets;
 
-    public MosaicProperties() {}
+    public MosaicProperties() {
+        this.tilesets = new LinkedList<>();
+    }
 
     public List<TilesetProperties> getTilesets() {
         return tilesets;
