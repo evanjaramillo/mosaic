@@ -24,6 +24,9 @@ public class MosaicProperties {
 
     @Override
     public String toString() {
-        return "MosaicProperties{" + "tilesets=" + tilesets + '}';
+        // prettier-ignore
+        return "MosaicProperties{" +
+                "tilesets=" + tilesets +
+                '}';
     }
 }

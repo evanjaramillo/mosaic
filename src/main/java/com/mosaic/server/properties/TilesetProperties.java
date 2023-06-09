@@ -31,15 +31,10 @@ public class TilesetProperties {
 
     @Override
     public String toString() {
-        return (
-            "TilesetProperties{" +
-            "name='" +
-            name +
-            '\'' +
-            ", databasePath='" +
-            databasePath +
-            '\'' +
-            '}'
-        );
+        // prettier-ignore
+        return "TilesetProperties{" +
+                "name='" + name + '\'' +
+                ", databasePath='" + databasePath + '\'' +
+                '}';
     }
 }
