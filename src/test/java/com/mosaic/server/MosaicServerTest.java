@@ -1,11 +1,11 @@
 package com.mosaic.server;
 
-import com.mosaic.server.properties.TilesetProperties;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.Assert.fail;
-
+@SpringBootTest
 public class MosaicServerTest {
-    
 
+    @Test
+    public void contextLoads() {}
 }
