@@ -15,4 +15,38 @@ public class TileDataCacheProperties {
     public TileDataCacheProperties() {
 
     }
+
+    public long getMaximumSize() {
+        return maximumSize;
+    }
+
+    public void setMaximumSize(long maximumSize) {
+        this.maximumSize = maximumSize;
+    }
+
+    public long getExpiryMinutes() {
+        return expiryMinutes;
+    }
+
+    public void setExpiryMinutes(long expiryMinutes) {
+        this.expiryMinutes = expiryMinutes;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    @Override
+    public String toString() {
+        return "TileDataCacheProperties{" +
+                "maximumSize=" + maximumSize +
+                ", expiryMinutes=" + expiryMinutes +
+                ", enabled=" + enabled +
+                '}';
+    }
+
 }

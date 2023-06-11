@@ -9,7 +9,12 @@ public class TilesetProperties {
     private String name;
 
     @NotBlank
-    private String databasePath;
+    private TileSetType dataType;
+
+    @NotBlank
+    private String path;
+
+    private TileDataCacheProperties cache;
 
     public TilesetProperties() {}
 
@@ -21,20 +26,41 @@ public class TilesetProperties {
         this.name = name;
     }
 
-    public String getDatabasePath() {
-        return databasePath;
+    public TileSetType getDataType() {
+        return dataType;
     }
 
-    public void setDatabasePath(String databasePath) {
-        this.databasePath = databasePath;
+    public void setDataType(String dataType) {
+        this.dataType = TileSetType.fromString(dataType);
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public TileDataCacheProperties getCache() {
+
+        return cache;
+
+    }
+
+    public void setCache(TileDataCacheProperties cache) {
+
+        this.cache = cache;
+
     }
 
     @Override
     public String toString() {
-        // prettier-ignore
         return "TilesetProperties{" +
                 "name='" + name + '\'' +
-                ", databasePath='" + databasePath + '\'' +
+                ", path='" + path + '\'' +
+                ", cache=" + cache +
                 '}';
     }
+
 }

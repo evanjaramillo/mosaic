@@ -1,6 +1,6 @@
 package com.mosaic.server.service;
 
-import com.mosaic.server.TileSetContext;
+import com.mosaic.server.AbstractTileDataContext;
 import com.mosaic.server.properties.MosaicProperties;
 import com.mosaic.server.properties.TilesetProperties;
 import java.util.List;
@@ -10,10 +10,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import org.sqlite.SQLiteConfig;
-import org.sqlite.SQLiteDataSource;
 
 @Service
 public class MosaicService {
@@ -21,7 +18,7 @@ public class MosaicService {
 
     private final MosaicProperties properties;
 
-    private final Map<String, TileSetContext> contexts;
+    private final Map<String, AbstractTileDataContext> contexts;
 
     @Autowired
     public MosaicService(MosaicProperties properties) {
@@ -39,30 +36,18 @@ public class MosaicService {
         }
 
         for (TilesetProperties tileset : tilesets) {
-            logger.info("Configuring mosaic for tileset '{}', path '{}'.", tileset.getName(), tileset.getDatabasePath());
+            logger.info("Configuring mosaic for tileset '{}', path '{}'.", tileset.getName(), tileset.getPath());
 
             try {
 
-                contexts.put(tileset.getName(), new TileSetContext(tileset,
-                        getCustomTemplate(tileset.getDatabasePath())));
+                AbstractTileDataContext context = AbstractTileDataContext.createFromType(tileset.getDataType(), tileset);
+                contexts.put(tileset.getName(), context);
 
             } catch (Exception e) {
                 logger.debug("\n{}", ExceptionUtils.getStackTrace(e));
                 logger.error("Failed to add tileset '{}'. {}", tileset.getName(), e.getMessage());
             }
         }
-    }
-
-    private JdbcTemplate getCustomTemplate(String path) {
-
-        SQLiteConfig config = new SQLiteConfig();
-        config.setReadOnly(true);
-
-        SQLiteDataSource dataSource = new SQLiteDataSource(config);
-        dataSource.setDatabaseName(path);
-        dataSource.setUrl("jdbc:sqlite:" + path);
-
-        return new JdbcTemplate(dataSource);
     }
 
     public byte[] getTileData(String sourceData, int zoom, int col, int row) {
