@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Service;
 import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteDataSource;
@@ -40,21 +39,16 @@ public class MosaicService {
         }
 
         for (TilesetProperties tileset : tilesets) {
-            logger.info(
-                "Configuring mosaic for tileset '{}', path '{}'.",
-                tileset.getName(),
-                tileset.getDatabasePath()
-            );
+            logger.info("Configuring mosaic for tileset '{}', path '{}'.", tileset.getName(), tileset.getDatabasePath());
 
             try {
-                contexts.put(tileset.getName(), new TileSetContext(tileset, getCustomTemplate(tileset.getDatabasePath())));
+
+                contexts.put(tileset.getName(), new TileSetContext(tileset,
+                        getCustomTemplate(tileset.getDatabasePath())));
+
             } catch (Exception e) {
                 logger.debug("\n{}", ExceptionUtils.getStackTrace(e));
-                logger.error(
-                    "Failed to add tileset '{}'. {}",
-                    tileset.getName(),
-                    e.getMessage()
-                );
+                logger.error("Failed to add tileset '{}'. {}", tileset.getName(), e.getMessage());
             }
         }
     }
@@ -77,6 +71,8 @@ public class MosaicService {
             logger.warn("Tileset '{}' was requested, but not configured.", sourceData);
             return null;
         }
+
+        logger.debug("Requested tile from '{}' at x:{}, y:{}, z:{}", sourceData, col, row, zoom);
 
         return this.contexts.get(sourceData).getTileData(zoom, col, row);
 
