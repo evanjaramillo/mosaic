@@ -70,6 +70,7 @@ public class MbTilesDataContext extends AbstractTileDataContext {
         } catch (EmptyResultDataAccessException e) {
 
             logger.warn("No tiles found for query: x:{}, y:{}, z:{}. {}", column, row, zoomLevel, e.getMessage());
+            putCache(inputHash, new byte[0]);
             return null;
 
         }
