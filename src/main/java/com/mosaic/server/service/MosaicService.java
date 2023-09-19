@@ -1,3 +1,21 @@
+////////////////////////////////////////////////////////////////////////////////
+// mosaic - a tile map server                                                  /
+// Copyright (C) 2023 Evan Jaramillo                                           /
+//                                                                             /
+// This program is free software: you can redistribute it and/or modify        /
+// it under the terms of the GNU General Public License as published by        /
+// the Free Software Foundation, either version 3 of the License, or           /
+// (at your option) any later version.                                         /
+//                                                                             /
+// This program is distributed in the hope that it will be useful,             /
+// but WITHOUT ANY WARRANTY; without even the implied warranty of              /
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               /
+// GNU General Public License for more details.                                /
+//                                                                             /
+// You should have received a copy of the GNU General Public License           /
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.      /
+////////////////////////////////////////////////////////////////////////////////
+
 package com.mosaic.server.service;
 
 import com.mosaic.server.AbstractTileDataContext;
@@ -31,8 +49,10 @@ public class MosaicService {
         List<TilesetProperties> tilesets = properties.getTilesets();
 
         if (tilesets.isEmpty()) {
-            logger.warn("No tileset configuration provided. Nothing to do...");
-            return;
+            String err = "No tileset configuration provided. Nothing to do...";
+            logger.error(err);
+            // TODO: consider stopping the service here.
+            // throw new RuntimeException(err);
         }
 
         for (TilesetProperties tileset : tilesets) {
@@ -56,8 +76,6 @@ public class MosaicService {
             logger.warn("Tileset '{}' was requested, but not configured.", sourceData);
             return null;
         }
-
-        logger.debug("Requested tile from '{}' at x:{}, y:{}, z:{}", sourceData, col, row, zoom);
 
         return this.contexts.get(sourceData).getTileData(zoom, col, row);
 
