@@ -16,10 +16,36 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.      /
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.mosaic.server.interfaces;
+package com.mosaic.server.util;
 
-public interface ITileDataProvider {
+import com.mosaic.server.interfaces.IPair;
 
-    byte[] getTileData(int zoomLevel, int column, int row);
+public class ImmutablePair<K, V> implements IPair<K, V> {
+
+    private final K key;
+    private final V value;
+
+    public ImmutablePair(K key, V value) {
+        this.key = key;
+        this.value = value;
+    }
+
+    @Override
+    public K getKey() {
+        return key;
+    }
+
+    @Override
+    public V getValue() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return "ImmutablePair{" +
+                "key=" + key +
+                ", value=" + value +
+                '}';
+    }
 
 }

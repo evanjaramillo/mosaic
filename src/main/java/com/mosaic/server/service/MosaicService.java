@@ -19,7 +19,9 @@
 package com.mosaic.server.service;
 
 import com.mosaic.server.AbstractTileDataContext;
+import com.mosaic.server.mbtiles.MbTilesMetadata;
 import com.mosaic.server.properties.MosaicProperties;
+import com.mosaic.server.properties.TileSetType;
 import com.mosaic.server.properties.TilesetProperties;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +70,10 @@ public class MosaicService {
                 logger.error("Failed to add tileset '{}'. {}", tileset.getName(), e.getMessage());
             }
         }
+    }
+
+    public MbTilesMetadata getMetadata(String sourceData) {
+        return this.contexts.get(sourceData).getDataset().getMetadata();
     }
 
     public byte[] getTileData(String sourceData, int zoom, int col, int row) {

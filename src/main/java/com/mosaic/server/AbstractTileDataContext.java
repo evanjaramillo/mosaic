@@ -20,12 +20,13 @@ package com.mosaic.server;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.mosaic.server.interfaces.ITileDataProvider;
+import com.mosaic.server.interfaces.IMbTilesDataContext;
+import com.mosaic.server.mbtiles.MbTilesDataContext;
 import com.mosaic.server.properties.TileDataCacheProperties;
 import com.mosaic.server.properties.TileSetType;
 import com.mosaic.server.properties.TilesetProperties;
 
-public abstract class AbstractTileDataContext implements ITileDataProvider {
+public abstract class AbstractTileDataContext implements IMbTilesDataContext {
 
     private Cache<String, byte[]> dataCache;
     private boolean cacheEnabled;
@@ -49,7 +50,7 @@ public abstract class AbstractTileDataContext implements ITileDataProvider {
 
     }
 
-    public static AbstractTileDataContext createFromType(TileSetType t, TilesetProperties properties) {
+    public static AbstractTileDataContext createFromType(TileSetType t, TilesetProperties properties) throws Exception {
 
         switch (t) {
             case TILESET_MBTILES:

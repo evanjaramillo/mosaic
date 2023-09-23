@@ -1,6 +1,12 @@
 <script>
     import {onMount} from "svelte";
-    import {Viewer} from "cesium";
+    import {
+        CesiumTerrainProvider,
+        ImageryLayer,
+        TileMapServiceImageryProvider,
+        UrlTemplateImageryProvider,
+        Viewer
+    } from "cesium";
     import '../node_modules/cesium/Build/Cesium/Widgets/widgets.css';
 
     window["CESIUM_BASE_URL"] = './build';
@@ -18,9 +24,19 @@
             scene3DOnly: true,
             shouldAnimate: false,
             animation: false,
+            baseLayer: ImageryLayer.fromProviderAsync(
+                TileMapServiceImageryProvider.fromUrl('/build/Assets/Textures/NaturalEarthII'), {}),
             creditContainer: 'creditContainer'
         });
-    })
+
+        const urlImageryProvider = new UrlTemplateImageryProvider({
+            url: '/api/tiles/imagery/{z}/{x}/{reverseY}/data',
+            maximumLevel: 11
+        });
+        
+        viewer.imageryLayers.addImageryProvider(urlImageryProvider);
+
+    });
 </script>
 
 <div id="cesiumContainer">
