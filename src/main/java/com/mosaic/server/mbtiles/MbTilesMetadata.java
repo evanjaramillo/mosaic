@@ -18,7 +18,9 @@
 
 package com.mosaic.server.mbtiles;
 
+import com.mosaic.server.Layer;
 import com.mosaic.server.exception.MbTilesDatabaseComplianceException;
+import com.mosaic.server.interfaces.ILayer;
 import com.mosaic.server.interfaces.IMbTilesMetadata;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -33,8 +35,8 @@ public class MbTilesMetadata implements IMbTilesMetadata {
     private final String format;
     private final Map<String, String> otherParameters;
     private String json;
-    private float[] bounds;
-    private float[] center;
+    private double[] bounds;
+    private double[] center;
     private int minZoom;
     private int maxZoom;
     private String attribution;
@@ -59,13 +61,15 @@ public class MbTilesMetadata implements IMbTilesMetadata {
         this.format = metadata.get("format");
         metadata.remove("format");
 
-        // if the format value is `pbf` the metadata table must contain a `json` key with valid value.
-        if (this.format.equals("pbf")) {
-            if (!metadata.containsKey("json")) {
-                throw new MbTilesDatabaseComplianceException("Metadata `format` was pbf, but no `json` row exists.");
-            }
+        if (metadata.containsKey("json")) {
             this.json = metadata.get("json");
             metadata.remove("json");
+        }
+
+
+        // if the format value is `pbf` the metadata table must contain a `json` key with valid value.
+        if (this.format.equals("pbf") && this.json == null) {
+            throw new MbTilesDatabaseComplianceException("Metadata `format` was pbf, but no `json` row exists.");
         }
 
         // string of comma-separated numbers. The maximum extent of the rendered map area in WGS84 lon,lat,lon,lat.
@@ -77,18 +81,18 @@ public class MbTilesMetadata implements IMbTilesMetadata {
 
             if (split.length == 4) {
 
-                this.bounds = new float[4];
+                this.bounds = new double[4];
 
                 for (int i = 0; i < split.length; i++) {
 
                     try {
 
-                        this.bounds[i] = Float.parseFloat(split[i]);
+                        this.bounds[i] = Double.parseDouble(split[i]);
 
                     } catch (NumberFormatException nfe) {
 
                         logger.debug("{}", ExceptionUtils.getStackTrace(nfe));
-                        logger.error("Error processing `bounds` element '{}' into a float.", split[i]);
+                        logger.error("Error processing `bounds` element '{}' into a double.", split[i]);
 
                     }
 
@@ -114,18 +118,18 @@ public class MbTilesMetadata implements IMbTilesMetadata {
 
             if (split.length == 3) {
 
-                this.center = new float[3];
+                this.center = new double[3];
 
                 for (int i = 0; i < split.length; i++) {
 
                     try {
 
-                        this.center[i] = Float.parseFloat(split[i]);
+                        this.center[i] = Double.parseDouble(split[i]);
 
                     } catch (NumberFormatException nfe) {
 
                         logger.debug("{}", ExceptionUtils.getStackTrace(nfe));
-                        logger.error("Error processing `center` element '{}' into a float.", split[i]);
+                        logger.error("Error processing `center` element '{}' into a double.", split[i]);
 
                     }
 
@@ -256,12 +260,12 @@ public class MbTilesMetadata implements IMbTilesMetadata {
     }
 
     @Override
-    public float[] getBounds() {
+    public double[] getBounds() {
         return bounds;
     }
 
     @Override
-    public float[] getCenter() {
+    public double[] getCenter() {
         return center;
     }
 
@@ -300,4 +304,34 @@ public class MbTilesMetadata implements IMbTilesMetadata {
         return otherParameters;
     }
 
+    @Override
+    public ILayer createTerrainLayer() {
+
+        Layer l = new Layer();
+        l.setBounds(this.bounds);
+        l.setFormat(this.format);
+        l.setVersion(this.version);
+
+        if (otherParameters.containsKey("tilejson")) {
+            l.setTilejson(otherParameters.get("tilejson"));
+        }
+
+        if (otherParameters.containsKey("projection")) {
+            l.setProjection(otherParameters.get("projection"));
+        }
+
+        if (otherParameters.containsKey("available")) {
+            l.setAvailable(otherParameters.get("available"));
+        }
+
+        if (otherParameters.containsKey("extensions")) {
+            l.setExtensions(otherParameters.get("extensions"));
+        }
+
+        if (otherParameters.containsKey("scheme")) {
+            l.setScheme(otherParameters.get("scheme"));
+        }
+
+        return l;
+    }
 }

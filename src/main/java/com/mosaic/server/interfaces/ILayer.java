@@ -18,23 +18,16 @@
 
 package com.mosaic.server.interfaces;
 
-import java.util.Map;
+public interface ILayer {
 
-public interface IMbTilesMetadata {
-
-    public String getName();
+    public String getTilejson();
     public String getFormat();
-    public String getJson();
-    public double[] getBounds();
-    public double[] getCenter();
-    public int getMinZoom();
-    public int getMaxZoom();
-    public String getAttribution();
-    public String getDescription();
-    public String getType();
     public String getVersion();
-    public Map<String, String> getOtherParameters();
-    public ILayer createTerrainLayer();
-
+    public String getScheme();
+    public String getTiles();
+    public String getProjection();
+    public String getAvailable();
+    public String getExtensions();
+    public double[] getBounds();
 
 }

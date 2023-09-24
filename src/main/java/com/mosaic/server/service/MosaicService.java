@@ -19,9 +19,9 @@
 package com.mosaic.server.service;
 
 import com.mosaic.server.AbstractTileDataContext;
+import com.mosaic.server.interfaces.ILayer;
 import com.mosaic.server.mbtiles.MbTilesMetadata;
 import com.mosaic.server.properties.MosaicProperties;
-import com.mosaic.server.properties.TileSetType;
 import com.mosaic.server.properties.TilesetProperties;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +74,10 @@ public class MosaicService {
 
     public MbTilesMetadata getMetadata(String sourceData) {
         return this.contexts.get(sourceData).getDataset().getMetadata();
+    }
+
+    public ILayer getTerrainLayerSpec(String sourceData) {
+        return this.contexts.get(sourceData).getDataset().getMetadata().createTerrainLayer();
     }
 
     public byte[] getTileData(String sourceData, int zoom, int col, int row) {

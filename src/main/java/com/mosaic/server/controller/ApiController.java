@@ -18,9 +18,11 @@
 
 package com.mosaic.server.controller;
 
+import com.mosaic.server.interfaces.ILayer;
 import com.mosaic.server.mbtiles.MbTilesMetadata;
 import com.mosaic.server.service.MosaicService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -34,15 +36,26 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApiController {
 
     private final MosaicService service;
+    private final HttpHeaders terrainHttpHeaders;
+
     @Autowired
     public ApiController(MosaicService service) {
         this.service = service;
+
+        terrainHttpHeaders = new HttpHeaders();
+        terrainHttpHeaders.add(HttpHeaders.CONTENT_TYPE, "application/octet-stream");
+        terrainHttpHeaders.add(HttpHeaders.CONTENT_ENCODING, "gzip");
     }
 
 
     @RequestMapping("/tiles/{name}/metadata")
     public ResponseEntity<MbTilesMetadata> getMetadata(@PathVariable("name") String name) {
         return new ResponseEntity<>(service.getMetadata(name), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/tiles/{name}/layer.json", produces = {"application/json"})
+    public ResponseEntity<ILayer> getTerrainLayerSpec(@PathVariable("name") String name) {
+        return new ResponseEntity<>(service.getTerrainLayerSpec(name), HttpStatus.OK);
     }
 
     @RequestMapping(path = "/tiles/{name}/{z}/{x}/{y}/data")
@@ -56,15 +69,14 @@ public class ApiController {
 
     }
 
-    @RequestMapping(value = "/tiles/{name}/{z}/{x}/{y}.terrain",
-            produces = {"application/vnd.quantized-mesh", "application/octet-stream;q=0.9"}
-    )
+    @RequestMapping(value = "/tiles/{name}/{z}/{x}/{y}.terrain")
     public ResponseEntity<byte[]> getTerrainData(@PathVariable("name") String name,
                                                  @PathVariable("z") int z,
                                                  @PathVariable("x") int x,
                                                  @PathVariable("y") int y) {
 
-        return new ResponseEntity<>(service.getTileData(name, z, x, y), HttpStatus.OK);
+        return new ResponseEntity<>(service.getTileData(name, z, x, y), terrainHttpHeaders, HttpStatus.OK);
 
     }
+
 }

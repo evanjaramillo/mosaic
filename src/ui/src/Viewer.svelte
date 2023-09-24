@@ -26,14 +26,17 @@
             animation: false,
             baseLayer: ImageryLayer.fromProviderAsync(
                 TileMapServiceImageryProvider.fromUrl('/build/Assets/Textures/NaturalEarthII'), {}),
+            terrainProvider: await CesiumTerrainProvider.fromUrl('/api/tiles/terrain', {
+                requestVertexNormals: false
+            }),
             creditContainer: 'creditContainer'
         });
 
         const urlImageryProvider = new UrlTemplateImageryProvider({
             url: '/api/tiles/imagery/{z}/{x}/{reverseY}/data',
-            maximumLevel: 11
+            maximumLevel: 13
         });
-        
+
         viewer.imageryLayers.addImageryProvider(urlImageryProvider);
 
     });
