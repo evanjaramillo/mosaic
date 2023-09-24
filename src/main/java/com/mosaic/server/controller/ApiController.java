@@ -19,6 +19,7 @@
 package com.mosaic.server.controller;
 
 import com.mosaic.server.interfaces.ILayer;
+import com.mosaic.server.interfaces.IMbTilesMetadata;
 import com.mosaic.server.mbtiles.MbTilesMetadata;
 import com.mosaic.server.service.MosaicService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController()
 @CrossOrigin(origins = "*")
-@RequestMapping(path = "/api")
+@RequestMapping(path = "/api/mbtiles")
 public class ApiController {
 
     private final MosaicService service;
@@ -48,17 +49,17 @@ public class ApiController {
     }
 
 
-    @RequestMapping("/tiles/{name}/metadata")
-    public ResponseEntity<MbTilesMetadata> getMetadata(@PathVariable("name") String name) {
+    @RequestMapping("/{name}/metadata")
+    public ResponseEntity<IMbTilesMetadata> getMetadata(@PathVariable("name") String name) {
         return new ResponseEntity<>(service.getMetadata(name), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/tiles/{name}/layer.json", produces = {"application/json"})
+    @RequestMapping(value = "/{name}/layer.json")
     public ResponseEntity<ILayer> getTerrainLayerSpec(@PathVariable("name") String name) {
         return new ResponseEntity<>(service.getTerrainLayerSpec(name), HttpStatus.OK);
     }
 
-    @RequestMapping(path = "/tiles/{name}/{z}/{x}/{y}/data")
+    @RequestMapping(path = "/{name}/{z}/{x}/{y}/data")
     public ResponseEntity<byte[]> getTileData(@PathVariable("name") String name,
                                               @PathVariable("z") int z,
                                               @PathVariable("x") int x,

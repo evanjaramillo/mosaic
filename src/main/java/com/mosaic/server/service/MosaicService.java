@@ -20,6 +20,9 @@ package com.mosaic.server.service;
 
 import com.mosaic.server.AbstractTileDataContext;
 import com.mosaic.server.interfaces.ILayer;
+import com.mosaic.server.interfaces.IMbTilesDataContext;
+import com.mosaic.server.interfaces.IMbTilesDataset;
+import com.mosaic.server.interfaces.IMbTilesMetadata;
 import com.mosaic.server.mbtiles.MbTilesMetadata;
 import com.mosaic.server.properties.MosaicProperties;
 import com.mosaic.server.properties.TilesetProperties;
@@ -72,18 +75,55 @@ public class MosaicService {
         }
     }
 
-    public MbTilesMetadata getMetadata(String sourceData) {
-        return this.contexts.get(sourceData).getDataset().getMetadata();
+    public IMbTilesMetadata getMetadata(String sourceData) {
+
+        IMbTilesDataContext context = this.contexts.get(sourceData);
+
+        if (context == null) {
+            logger.error("No context available for data source: '{}'", sourceData);
+            return null;
+        }
+
+        IMbTilesDataset dataset = context.getDataset();
+
+        if (dataset == null) {
+            logger.error("No dataset available for datasource '{}'", sourceData);
+            return null;
+        }
+
+        return dataset.getMetadata();
     }
 
     public ILayer getTerrainLayerSpec(String sourceData) {
-        return this.contexts.get(sourceData).getDataset().getMetadata().createTerrainLayer();
+
+        IMbTilesDataContext context = this.contexts.get(sourceData);
+
+        if (context == null) {
+            logger.error("No context available for data source: '{}'", sourceData);
+            return null;
+        }
+
+        IMbTilesDataset dataset = context.getDataset();
+
+        if (dataset == null) {
+            logger.error("No dataset available for datasource '{}'", sourceData);
+            return null;
+        }
+
+        IMbTilesMetadata metadata = dataset.getMetadata();
+
+        if (metadata == null) {
+            logger.error("No metadata available for datasource '{}'", sourceData);
+            return null;
+        }
+
+        return metadata.createTerrainLayer();
+
     }
 
     public byte[] getTileData(String sourceData, int zoom, int col, int row) {
 
         if (!this.contexts.containsKey(sourceData)) {
-            logger.warn("Tileset '{}' was requested, but not configured.", sourceData);
             return null;
         }
 

@@ -7,4 +7,5 @@
 
 ${application.title} v${application.version}
 Copyright (C) 2023 by Evan Jaramillo
-This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions.
+This program comes with ABSOLUTELY NO WARRANTY.
+Mosaic is free software, and you are welcome to redistribute it under the terms of the GPLv3 license.

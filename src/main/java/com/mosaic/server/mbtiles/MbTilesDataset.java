@@ -18,7 +18,9 @@
 
 package com.mosaic.server.mbtiles;
 
-public class MbTilesDataset {
+import com.mosaic.server.interfaces.IMbTilesDataset;
+
+public class MbTilesDataset implements IMbTilesDataset {
 
     private MbTilesMetadata metadata;
 

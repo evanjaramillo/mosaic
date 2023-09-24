@@ -19,6 +19,7 @@
 package com.mosaic.server.mbtiles;
 
 import com.mosaic.server.AbstractTileDataContext;
+import com.mosaic.server.interfaces.IMbTilesDataContext;
 import com.mosaic.server.util.ImmutablePair;
 import com.mosaic.server.exception.MbTilesDatabaseComplianceException;
 import com.mosaic.server.interfaces.IPair;
@@ -38,7 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MbTilesDataContext extends AbstractTileDataContext {
+public class MbTilesDataContext extends AbstractTileDataContext implements IMbTilesDataContext {
 
     private final Logger logger = LoggerFactory.getLogger(MbTilesDataContext.class);
     private final TilesetProperties properties;
