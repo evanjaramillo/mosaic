@@ -28,6 +28,7 @@ import com.mosaic.server.properties.MosaicProperties;
 import com.mosaic.server.properties.TilesetProperties;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -119,6 +120,10 @@ public class MosaicService {
 
         return metadata.createTerrainLayer();
 
+    }
+
+    public Set<String> getConfiguredContexts() {
+        return this.contexts.keySet();
     }
 
     public byte[] getTileData(String sourceData, int zoom, int col, int row) {

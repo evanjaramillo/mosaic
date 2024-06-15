@@ -20,27 +20,25 @@ package com.mosaic.server.controller;
 
 import com.mosaic.server.interfaces.ILayer;
 import com.mosaic.server.interfaces.IMbTilesMetadata;
-import com.mosaic.server.mbtiles.MbTilesMetadata;
 import com.mosaic.server.service.MosaicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
 
 @RestController()
 @CrossOrigin(origins = "*")
-@RequestMapping(path = "/api/mbtiles")
-public class ApiController {
+@RequestMapping(path = "/api/tiles")
+public class TilesApi {
 
     private final MosaicService service;
     private final HttpHeaders terrainHttpHeaders;
 
     @Autowired
-    public ApiController(MosaicService service) {
+    public TilesApi(MosaicService service) {
         this.service = service;
 
         terrainHttpHeaders = new HttpHeaders();
@@ -48,6 +46,10 @@ public class ApiController {
         terrainHttpHeaders.add(HttpHeaders.CONTENT_ENCODING, "gzip");
     }
 
+    @GetMapping()
+    public ResponseEntity<Set<String>> getConfiguredContexts() {
+        return new ResponseEntity<>(this.service.getConfiguredContexts(), HttpStatus.OK);
+    }
 
     @RequestMapping("/{name}/metadata")
     public ResponseEntity<IMbTilesMetadata> getMetadata(@PathVariable("name") String name) {
@@ -70,7 +72,7 @@ public class ApiController {
 
     }
 
-    @RequestMapping(value = "/tiles/{name}/{z}/{x}/{y}.terrain")
+    @RequestMapping(value = "/{name}/{z}/{x}/{y}.terrain")
     public ResponseEntity<byte[]> getTerrainData(@PathVariable("name") String name,
                                                  @PathVariable("z") int z,
                                                  @PathVariable("x") int x,

@@ -1,0 +1,30 @@
+{
+  "name": "mosaic-ui",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .js,.svelte",
+    "lint-fix": "eslint . --ext .js,.svelte --fix --quiet"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^3.0.2",
+    "autoprefixer": "^10.4.19",
+    "daisyui": "^4.12.2",
+    "eslint": "^8.42.0",
+    "eslint-config-mdcs": "^5.0.0",
+    "eslint-plugin-svelte": "^2.30.0",
+    "postcss": "^8.4.38",
+    "svelte": "^4.2.12",
+    "tailwindcss": "^3.4.4",
+    "vite": "^5.2.0",
+    "vite-plugin-static-copy": "^1.0.5"
+  },
+  "dependencies": {
+    "@fontsource/orbitron": "^5.0.19",
+    "cesium": "^1.118.2"
+  }
+}

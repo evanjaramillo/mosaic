@@ -1,0 +1,20 @@
+{
+  "root": true,
+  "plugins": [],
+  "extends": [
+    "eslint:recommended",
+    "plugin:svelte/recommended",
+    "mdcs"
+  ],
+  "overrides": [
+    {
+      "files": ["*.svelte"],
+      "parser": "svelte-eslint-parser",
+      "parserOptions": {}
+    }
+  ],
+  "rules": {
+    "indent": ["error", 4],
+    "quotes": ["error", "single"]
+  }
+}
