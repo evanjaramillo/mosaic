@@ -19,9 +19,6 @@
 package com.mosaic.server.image;
 
 
-import com.mosaic.server.TmsBoundingBox;
-import com.mosaic.server.TmsTree;
-
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -53,11 +50,14 @@ public class ImageTiler {
         return resized;
     }
 
-    public void quad(BufferedImage original, TmsTree<BufferedImage> tree, int level) throws Exception {
+    public void quad(BufferedImage original, TmsTree<BufferedImage> tree, int level) {
 
         if (original == null || level < 0) {
             throw new IllegalStateException("image file was null");
         }
+
+        TmsBoundingBox box = tree.getBoundingBox();
+        box.setLevel(level);
 
         // we want to store the resized image for this level at this node.
         tree.setData(resize(this.tileSizeX, this.tileSizeY, original));
@@ -66,17 +66,14 @@ public class ImageTiler {
         int imageHeight = original.getHeight(),
             imageWidth = original.getWidth();
 
-        int imageHalfHeight = imageHeight / 2,
-            imageHalfWidth = imageWidth / 2;
-
         // the recursion will stop when the size of the remaining images is less than the requested
         // tile sizes.
         if (imageWidth > this.tileSizeX && imageHeight > this.tileSizeY) {
 
-            TmsBoundingBox box = tree.getBoundingBox();
-            box.setLevel(level);
-
             List<TmsBoundingBox> subdivision = box.subdivide();
+
+            int imageHalfHeight = imageHeight / 2,
+                imageHalfWidth = imageWidth / 2;
 
             for (int i = 0; i < 4; i++) {
 
@@ -88,7 +85,7 @@ public class ImageTiler {
                 // full-scale sub image
                 BufferedImage subImage = original.getSubimage(xOffset, yOffset, imageHalfWidth, imageHalfHeight);
                 // size-compliant sub image
-                BufferedImage resized = resize(this.tileSizeX, this.tileSizeY, subImage); // force to 256x256
+                BufferedImage resized = resize(this.tileSizeX, this.tileSizeY, subImage); // force to fixed size
 
                 TmsTree<BufferedImage> node = new TmsTree<>(resized, bb);
                 tree.setChild(i, node);

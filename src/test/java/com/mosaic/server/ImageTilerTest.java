@@ -18,9 +18,14 @@
 
 package com.mosaic.server;
 
+import static com.mosaic.server.image.TileMath.getTileX;
+import static com.mosaic.server.image.TileMath.getTileY;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import com.mosaic.server.image.ImageTiler;
+import com.mosaic.server.image.TmsBoundingBox;
+import com.mosaic.server.image.TmsTree;
 import org.junit.Test;
 
 import javax.imageio.ImageIO;
@@ -29,19 +34,27 @@ import java.io.File;
 
 public class ImageTilerTest {
 
+//    private boolean zeroSeen = false;
+
     @Test
     public void mock() {
+
         try {
 
             BufferedImage original = ImageIO.read(new File("/home/evan/Desktop/world.200412.3x21600x10800.png"));
-
             ImageTiler img = new ImageTiler();
+            TmsTree<BufferedImage> tree = new TmsTree<>(); // empty tree
+            img.quad(original, tree, 0); // fill the tree recursively
 
-            TmsTree<BufferedImage> tree = new TmsTree<>();
+            BufferedImage caribbean = tree.getData(4, 5, 6);
+            assertNotNull(caribbean);
+            ImageIO.write(caribbean, "png", new File("target/", "caribbean.png"));
 
-            img.quad(original, tree, 0);
+            BufferedImage asia = tree.getData(1, 1, 0);
+            assertNotNull(asia);
+            ImageIO.write(asia, "png", new File("target/", "asia.png"));
 
-            persistTree(tree);
+            // persistTree(tree); // persist the images.
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -57,8 +70,8 @@ public class ImageTilerTest {
 
         TmsBoundingBox box = tree.getBoundingBox();
         int zoom = box.getLevel();
-        int x = box.getTileX(box.getMinX());
-        int y = box.getTileY(box.getMaxY());
+        int x = getTileX(box.getMinX(), zoom);
+        int y = getTileY(box.getMaxY(), zoom);
 
         File f = new File("target/", String.format("%d/%d/%d.png", zoom, x, y));
 

@@ -16,15 +16,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.      /
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.mosaic.server;
+package com.mosaic.server.image;
 
 import jakarta.annotation.Nonnull;
 
 import java.util.Iterator;
 import java.util.function.Consumer;
 
+import static com.mosaic.server.image.TileMath.latitudeFromTile;
+import static com.mosaic.server.image.TileMath.longitudeFromTile;
+
 public class TmsTree<T> implements Iterable<TmsTree<T>> {
 
+    private final int MAX_CHILDREN = 4;
     private T data;
     private final TmsBoundingBox boundingBox;
     private TmsTree<T> northWest;
@@ -56,6 +60,50 @@ public class TmsTree<T> implements Iterable<TmsTree<T>> {
 
     public T getData() {
         return data;
+    }
+
+    // find the leaf that contains these elements
+    private TmsTree<T> search(double lon, double lat, int zoom, TmsTree<T> node) {
+
+        TmsTree<T> retTreeNode = null; // null will be returned if we make a wrong turn.
+
+        TmsBoundingBox bb = node.getBoundingBox();
+        System.out.printf("searching box %s\n", bb);// TODO REMOVE
+        if (bb.contains(lon, lat)) {
+            // if the current level box contains the point, we know this node or a child contains the
+            // point we are looking for.
+            if (!node.hasChildren() || bb.getLevel() >= zoom) {
+                // no children to choose from or desired LOD is achieved.
+                return node;
+            }
+
+            // search the children for the desired point
+            // TODO: fix the one-off error in the y direction
+            for (TmsTree<T> n : node) {
+                if (n == null || !n.getBoundingBox().contains(lon, lat)) {
+                    continue;
+                }
+                retTreeNode = search(lon, lat, zoom, n);
+            }
+
+        }
+
+        return retTreeNode;
+    }
+
+    public T getData(int zoom, int x, int y) {
+
+        double lon = longitudeFromTile(x, zoom);
+        double lat = latitudeFromTile(y, zoom);
+
+        TmsTree<T> node = search(lon, lat, zoom, this);
+
+        if (node == null) {
+            return null;
+        }
+
+        return node.getData();
+
     }
 
     public void setData(T data) {
@@ -122,7 +170,7 @@ public class TmsTree<T> implements Iterable<TmsTree<T>> {
 
             @Override
             public boolean hasNext() {
-                return index < 4;
+                return index < MAX_CHILDREN;
             }
 
             @Override

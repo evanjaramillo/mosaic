@@ -16,7 +16,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.      /
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.mosaic.server;
+package com.mosaic.server.image;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,34 +65,12 @@ public class TmsBoundingBox {
         return maxY;
     }
 
-    public int getTileX(double longitude) {
-
-        int xtile = (int) Math.floor((longitude + 180) / 360 * (1 << level));
-
-        if (xtile < 0) {
-            xtile = 0;
-        }
-
-        if (xtile >= ( 1 << level)) {
-            xtile = ((1 << level) - 1);
-        }
-
-        return xtile;
+    public boolean contains(double x, double y) {
+        return x >= this.minX && x <= this.maxX && y >= this.minY && y <= this.maxY;
     }
 
-    public int getTileY(double latitude) {
-
-        int ytile = (int) Math.floor((1 - Math.log(Math.tan(Math.toRadians(latitude)) + 1 / Math.cos(Math.toRadians(latitude))) / Math.PI) / 2 * (1 << level));
-
-        if (ytile < 0) {
-            ytile = 0;
-        }
-
-        if (ytile >= ( 1 << level)) {
-            ytile = ((1 << level) - 1);
-        }
-
-        return ytile;
+    public boolean exclusiveContains(double x, double y) {
+        return x > this.minX && x < this.maxX && y > this.minY && y < this.maxY;
     }
 
     public List<TmsBoundingBox> subdivide() {
@@ -110,5 +88,18 @@ public class TmsBoundingBox {
 
     public void setLevel(int level) {
         this.level = level;
+    }
+
+    @Override
+    public String toString() {
+        return "TmsBoundingBox{" +
+                "minX=" + minX +
+                ", minY=" + minY +
+                ", maxX=" + maxX +
+                ", maxY=" + maxY +
+                ", centerX=" + centerX +
+                ", centerY=" + centerY +
+                ", level=" + level +
+                '}';
     }
 }
